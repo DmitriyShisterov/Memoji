@@ -8,21 +8,26 @@ class Card {
         this.id = id;
         this.content = content;
     }
+    rotateCardBack(card) {
+        let back = card.children[1];
+        back.style.transform = 'rotateY(180deg)';
+        let front = card.children[0];
+        front.style.transform = 'rotateY(0deg)';
+    }
 }
 
 class Game {
     constructor() {
     }
     createCards() {
-        //  создаем карточки и заполняем их рандомом
-        for (let i = emojis.length - 1; i > 0; i--) { //перемешиваем массив
+        //  create card and shuffle emojis
+        for (let i = emojis.length - 1; i > 0; i--) { //shuffle array
             let j = Math.floor(Math.random() * (i + 1));
             [emojis[i], emojis[j]] = [emojis[j], emojis[i]];
         }
         for (let i = 0; i < cardsId.length; i++) {
             cards.push(new Card(cardsId[i], emojis[i]));
         }
-        console.log(cards);
         return cards;
     }
     renderCards() {
@@ -36,50 +41,56 @@ class Game {
     }
     closeCards () {
         let cards = document.querySelectorAll('.card');
-        for (let i = 0; i < cards.length; i += 1) {
+        for (let i = 0; i < cards.length; i++) {
             if (cards[i].classList.contains('isOpenRight')) {
-                rotateCardBack(cards[i]);
+                Card.prototype.rotateCardBack(cards[i]);
                 cards[i].classList.remove('isOpenRight');
             }
             if (cards[i].classList.contains('isOpenWrong')) {
-                rotateCardBack(cards[i]);
+                Card.prototype.rotateCardBack(cards[i]);
                 cards[i].classList.remove('isOpenWrong');
             }
             if (cards[i].classList.contains('isOpen')) {
-                rotateCardBack(cards[i]);
+                Card.prototype.rotateCardBack(cards[i]);
                 cards[i].classList.remove('isOpen');
             }
         }
     };
+    cardChecker () {
+        let cards = document.querySelectorAll('.card');
+        for (let i = 0; i < cards.length; i++) {
+            if (!cards[i].classList.contains('isOpenRight')) {
+                return false;
+            }
+        }
+        return true;
+    };
     startTheGame() {
-        console.log('startTheGame');
         this.createCards();
         this.renderCards();
         this.closeCards();
+        this.cardChecker();
     }
 }
 
-
-/*const cards = createCards();*/
-/*renderCards(cards);*/
-
 const fronts = document.querySelectorAll(".front");
-for (let i = 0; i < fronts.length; i += 1) {
-    fronts[i].addEventListener('click', (e) => {
-        //first step: animation
+for (let i = 0; i < fronts.length; i++) {
+    fronts[i].addEventListener('click', function (e) {
+        //rotate cards on click;
         e.target.style.transform = 'rotateY(180deg)';
         e.target.nextElementSibling.style.transform = 'rotateY(360deg)';
-        //check if we have cards that are not the same
+        //check cards if we have cards that are not the same
         let wrongCards = document.querySelectorAll('.isOpenWrong');
-        for (let j = 0; j < wrongCards.length; j += 1) {
+        for (let j = 0; j < wrongCards.length; j ++) {
             wrongCards[j].classList.remove('isOpenWrong');
-            rotateCardBack(wrongCards[j]);
+            Card.prototype.rotateCardBack(wrongCards[j]);
         }
         //adding class "IsOpen" to clicked card
         let isOpenCard = document.querySelector('.isOpen');
         let card = e.target.parentNode;
         card.classList.add('isOpen');
         card.classList.add('oddCard');
+        //check cards content
         if (isOpenCard) {
             let firstCardContent = isOpenCard.children[1].children[0].textContent;
             let secondCardContent = card.children[1].children[0].textContent;
@@ -97,31 +108,12 @@ for (let i = 0; i < fronts.length; i += 1) {
                 isOpenCard.classList.remove('isOpen');
             }
         }
-        if (cardChecker()) {
-
+        if (Game.prototype.cardChecker()) {
         }
     })
 }
-
-const cardChecker = () => {
-    let cards = document.querySelectorAll('.card');
-    for (let i = 0; i < cards.length; i += 1) {
-        if (!cards[i].classList.contains('isOpenRight')) {
-            return false;
-        }
-    }
-    return true;
-};
-
-function rotateCardBack(card) {
-    let back = card.children[1];
-    back.style.transform = 'rotateY(180deg)';
-    let front = card.children[0];
-    front.style.transform = 'rotateY(0deg)';
-}
-
-let ggame = new Game();
-ggame.startTheGame();
+let game = new Game();
+game.startTheGame();
 
 
 
