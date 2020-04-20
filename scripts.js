@@ -16,6 +16,33 @@ class Card {
     }
 }
 
+class Timer {
+    constructor(){
+    }
+    timerStart(){
+            var now	= new Date(),
+            times	= [1, 0,],
+            box = document.getElementsByClassName('timer');
+
+        function showTimer(min, sec) {
+            box[0].innerText = min+':'+sec;
+        }
+
+        var tm = setInterval(function() {
+            times[1]--;
+            if (times[0] == 0 && times[1] == 0) {
+                clearInterval(tm);
+            } else if (times[1] == -1) {
+                times[1] = 59;
+                times[0]--;
+            }
+            var m = (times[0] < 10) ? '0' + times[0] : times[0],
+                s = (times[1] < 10) ? '0' + times[1] : times[1];
+            showTimer(m, s);
+        }, 1000);
+    }
+}
+
 class Game {
     constructor() {
     }
@@ -38,6 +65,10 @@ class Game {
             let card = cardBlocks[i];
             card.children[1].children[0].textContent = cardContent;
         }
+    }
+    startTimer(){
+        let timer = new Timer();
+        timer.timerStart();
     }
     closeCards () {
         let cards = document.querySelectorAll('.card');
@@ -70,6 +101,7 @@ class Game {
         this.renderCards();
         this.closeCards();
         this.cardChecker();
+        this.startTimer();
     }
 }
 

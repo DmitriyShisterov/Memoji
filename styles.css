@@ -141,8 +141,8 @@ body{
 .btn{
     display: block;
     box-shadow: 1px 1px 1px #434344;
-    padding-left: 30px;
-    padding-right: 30px;
+    padding-left: 30;
+    padding-right: 30;
     height: 40px;
     margin:auto;
     margin-bottom: 30px;
