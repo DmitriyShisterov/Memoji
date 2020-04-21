@@ -1,6 +1,8 @@
 let emojis = ['🐶', '🐹', '🐻', '🐼', '🐨', '🐯', '🐶', '🐹', '🐻', '🐼', '🐨', '🐯'];
 let cardsId = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 let cards = [];
+let idTimer = null;
+let timerIsWorked = false;
 
 class Card {
     constructor(id, content) {
@@ -15,32 +17,6 @@ class Card {
         front.style.transform = 'rotateY(0deg)';
     }
 }
-
-class Timer {
-    constructor() {
-    }
-
-    timerStart() {
-        let timer = document.querySelector('.timer');
-            let endTime = new Date().getTime() + 60000;
-            setInterval(() => {
-                let now = new Date().getTime();
-                let timeLeft = endTime - now;
-                let sec = Math.floor(timeLeft / 1000);
-                timer.innerText = `00:${sec > 10 ? sec : `0${sec}`}`;
-                if (timeLeft < 0) {
-                    clearTimeout(timerId);
-                    timer.innerText = '01:00';
-                    timerIsWorked = false;
-                    let modal = document.querySelector('.modal');
-                    modal.children[0].children[0].textContent = 'Lose';
-                    modal.children[0].children[1].children[0].textContent = 'Try Again';
-                    modal.style.display = 'block';
-                }
-            }, 1000);
-    }
-}
-
         class Game {
             constructor() {
             }
@@ -67,9 +43,31 @@ class Timer {
                 }
             }
 
-            startTimer() {
-                let timer = new Timer();
-                timer.timerStart();
+            timer() {
+                let timer = document.querySelector('.timer');
+                    let endTime = new Date().getTime() + 60000;
+                    let timerId = setInterval(()=>{
+                        idTimer = timerId;
+                        let now = new Date().getTime();
+                        let timeLeft = endTime - now;
+                        let sec = Math.floor(timeLeft / 1000);
+                        timer.innerText = `00:${sec > 10 ? sec : `0${sec}`}`;
+                        if (timeLeft < 0){
+                            clearTimeout(timerId);
+                            /*timer.innerText = '01:00';*/
+                            this.renderTimer('01:00');
+                            timerIsWorked = false;
+                            let modal = document.querySelector('.modal');
+                            modal.children[0].children[0].textContent = 'Lose';
+                            modal.children[0].children[1].children[0].textContent = 'Try Again';
+                            modal.style.display = 'block';
+                        }
+                    },1000)
+
+            }
+            renderTimer(x){
+                let timer = document.querySelector('.timer');
+                timer.innerText = x;
             }
 
             closeCards() {
@@ -99,19 +97,21 @@ class Timer {
                 }
                 return true;
             };
-
             startTheGame() {
                 this.createCards();
                 this.renderCards();
                 this.closeCards();
                 this.cardChecker();
-                this.startTimer();
             }
         }
 
         const fronts = document.querySelectorAll(".front");
         for (let i = 0; i < fronts.length; i++) {
             fronts[i].addEventListener('click', function (e) {
+                if (!timerIsWorked){
+                    timerIsWorked = true;
+                    game.timer();
+                }
                 //rotate cards on click;
                 e.target.style.transform = 'rotateY(180deg)';
                 e.target.nextElementSibling.style.transform = 'rotateY(360deg)';
@@ -144,7 +144,14 @@ class Timer {
                         isOpenCard.classList.remove('isOpen');
                     }
                 }
-                if (Game.prototype.cardChecker()) {
+                if (game.cardChecker()){
+                    clearTimeout(idTimer);
+                    game.renderTimer('01:00');
+                    timerIsWorked = false;
+                    let modal = document.querySelector('.modal');
+                    modal.children[0].children[0].textContent = 'Win';
+                    modal.children[0].children[1].children[0].textContent = 'Play Again';
+                    modal.style.display = 'block';
                 }
             })
         }
