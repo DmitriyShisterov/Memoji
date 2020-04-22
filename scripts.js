@@ -23,6 +23,9 @@ class Card {
 
             createCards() {
                 //  create card and shuffle emojis
+                if (!cards) {
+                    console.log('not empty');
+                }
                 for (let i = emojis.length - 1; i > 0; i--) { //shuffle array
                     let j = Math.floor(Math.random() * (i + 1));
                     [emojis[i], emojis[j]] = [emojis[j], emojis[i]];
@@ -61,6 +64,7 @@ class Card {
                             modal.children[0].children[0].textContent = 'Lose';
                             modal.children[0].children[1].children[0].textContent = 'Try Again';
                             modal.style.display = 'block';
+                            game.reStartGame();
                         }
                     },1000)
 
@@ -98,10 +102,19 @@ class Card {
                 return true;
             };
             startTheGame() {
+                this.closeCards();
                 this.createCards();
                 this.renderCards();
-                this.closeCards();
                 this.cardChecker();
+            }
+            reStartGame(){
+                let btn = document.querySelector('.btn');
+                btn.addEventListener('click', function () {
+                    let modal = document.querySelector('.modal');
+                    modal.style.display = 'none';
+                    cards = [];
+                    game.startTheGame();
+                });
             }
         }
 
@@ -152,11 +165,15 @@ class Card {
                     modal.children[0].children[0].textContent = 'Win';
                     modal.children[0].children[1].children[0].textContent = 'Play Again';
                     modal.style.display = 'block';
+                    game.reStartGame();
                 }
             })
         }
         let game = new Game();
         game.startTheGame();
+
+
+
 
 
 
