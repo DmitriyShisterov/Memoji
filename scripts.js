@@ -23,9 +23,6 @@ class Card {
 
             createCards() {
                 //  create card and shuffle emojis
-                if (!cards) {
-                    console.log('not empty');
-                }
                 for (let i = emojis.length - 1; i > 0; i--) { //shuffle array
                     let j = Math.floor(Math.random() * (i + 1));
                     [emojis[i], emojis[j]] = [emojis[j], emojis[i]];
@@ -57,7 +54,6 @@ class Card {
                         timer.innerText = `00:${sec > 10 ? sec : `0${sec}`}`;
                         if (timeLeft < 0){
                             clearTimeout(timerId);
-                            /*timer.innerText = '01:00';*/
                             this.renderTimer('01:00');
                             timerIsWorked = false;
                             let modal = document.querySelector('.modal');
